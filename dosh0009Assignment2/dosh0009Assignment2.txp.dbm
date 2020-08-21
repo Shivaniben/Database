@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1" last-position="0,0" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<role name="sid"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<role name="web"
+      inherit="true"
+      encrypted="true"
+      password="********">
+	<roles names="sid" role-type="member" />
+</role>
+
+<database name="A2D_Bank" encoding="UTF8" lc-collate="English_Canada.1252" lc-ctype="English_Canada.1252" is-template="false" allow-conns="true">
+	<role name="web"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="banking_advisor">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="380" y="80"/>
+	<column name="banker_id" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="banker_email">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="banker_name">
+		<type name="character varying" length="20"/>
+	</column>
+	<constraint name="pk_banker_id" type="pk-constr" table="public.banking_advisor">
+		<columns names="banker_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="branch">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1080" y="740"/>
+	<column name="branch_name" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="branch_city">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="asset">
+		<type name="character varying" length="30"/>
+	</column>
+	<constraint name="pk_branch_name" type="pk-constr" table="public.branch">
+		<columns names="branch_name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="customer_creditcard">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="340" y="380"/>
+	<column name="cust_fname">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="cust_lname">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="cust_city">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="cust_id" not-null="true">
+		<type name="character" length="11"/>
+	</column>
+	<column name="creditcard_number">
+		<type name="character" length="19"/>
+	</column>
+	<column name="expiry">
+		<type name="date" length="0"/>
+	</column>
+	<column name="banker_id" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<constraint name="pk_cust_id" type="pk-constr" table="public.customer_creditcard">
+		<columns names="cust_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="loan">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1080" y="400"/>
+	<column name="loan_number" not-null="true">
+		<type name="character varying" length="11"/>
+	</column>
+	<column name="amount">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="cust_id">
+		<type name="character" length="11"/>
+	</column>
+	<column name="branch_name">
+		<type name="character varying" length="15"/>
+	</column>
+	<constraint name="pk_loan_number" type="pk-constr" table="public.loan">
+		<columns names="loan_number" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="account">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="380" y="700"/>
+	<column name="category">
+		<type name="character varying" length="25"/>
+	</column>
+	<column name="account_number" not-null="true">
+		<type name="character" length="12"/>
+	</column>
+	<column name="balance">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="cust_id">
+		<type name="character" length="11"/>
+	</column>
+	<constraint name="pk_account_number" type="pk-constr" table="public.account">
+		<columns names="account_number" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<view name="creditcard_holder_v">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="800" y="720"/>
+	<reference>
+		<expression><![CDATA[ SELECT concat((((customer_creditcard.cust_fname)::text || ' '::text) || (customer_creditcard.cust_lname)::text)) AS customer,
+    customer_creditcard.creditcard_number
+   FROM customer_creditcard
+  WHERE (customer_creditcard.creditcard_number IS NOT NULL);]]></expression>
+	</reference>
+</view>
+
+<view name="customer_loan_v">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="840" y="340"/>
+	<reference>
+		<expression><![CDATA[ SELECT loan.cust_id,
+    loan.loan_number,
+    loan.amount
+   FROM loan
+  WHERE (loan.amount IS NOT NULL);]]></expression>
+	</reference>
+</view>
+
+<textbox name="Assignment2" bold="true" color="#ff5500" font-size="9">
+	<position x="840" y="100"/>
+	<comment><![CDATA[Project			:Assignmet2- A2D Bank
+Name			:Shivaniben Doshi
+Student Number		:040972996
+Student LogIn 		:dosh0009
+Compnay			:Algonquin College
+Date of Creation 		:2020/02/27
+Last date of Modification     	:2020/03/10
+]]></comment>
+</textbox>
+
+<constraint name="fk_banker_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.banking_advisor" table="public.customer_creditcard">
+	<columns names="banker_id" ref-type="src-columns"/>
+	<columns names="banker_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk1_branch_name" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.branch" table="public.loan">
+	<columns names="branch_name" ref-type="src-columns"/>
+	<columns names="branch_name" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk2_cust_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.customer_creditcard" table="public.loan">
+	<columns names="cust_id" ref-type="src-columns"/>
+	<columns names="cust_id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fk_cust_id" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.customer_creditcard" table="public.account">
+	<columns names="cust_id" ref-type="src-columns"/>
+	<columns names="cust_id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_customer_creditcard_banking_advisor" type="relfk"
+	 custom-color="#83af1f"
+	 src-table="public.customer_creditcard"
+	 dst-table="public.banking_advisor" reference-fk="fk_banker_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_loan_branch" type="relfk"
+	 custom-color="#5aa578"
+	 src-table="public.loan"
+	 dst-table="public.branch" reference-fk="fk1_branch_name"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_loan_customer_creditcard" type="relfk"
+	 custom-color="#4b3e56"
+	 src-table="public.loan"
+	 dst-table="public.customer_creditcard" reference-fk="fk2_cust_id"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_account_customer_creditcard" type="relfk"
+	 custom-color="#9ac721"
+	 src-table="public.account"
+	 dst-table="public.customer_creditcard" reference-fk="fk_cust_id"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
